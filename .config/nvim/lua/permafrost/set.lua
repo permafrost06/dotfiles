@@ -29,4 +29,5 @@ vim.opt.colorcolumn = "80"
 vim.o.ignorecase = true
 vim.o.smartcase = true
 
+vim.g.netrw_banner = 0
 vim.g.mapleader = " "

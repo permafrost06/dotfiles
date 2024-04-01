@@ -13,11 +13,11 @@ vim.keymap.set('n', '<C-p>', builtin.git_files, {})
 -- end)
 
 vim.keymap.set('n', '<leader>ps', function()
-    local cached_pickers = state.get_global_key "cached_pickers"
-    if cached_pickers == nil or vim.tbl_isempty(cached_pickers) then
+    -- local cached_pickers = state.get_global_key "cached_pickers"
+    -- if cached_pickers == nil or vim.tbl_isempty(cached_pickers) then
         require('telescope').extensions.live_grep_args.live_grep_args()
-    else
-        require('telescope.builtin').resume()
-    end
+    -- else
+    --     require('telescope.builtin').resume()
+    -- end
 	-- builtin.grep_string({ search = vim.fn.input("Grep > ") })
 end)

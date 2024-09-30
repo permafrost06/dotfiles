@@ -13,6 +13,12 @@ if [ -f "${XDG_CONFIG_HOME:-$HOME/.config}/x11/xprofile" ]; then
 else
 	. "$HOME/.xprofile"
 fi
+
+export XDG_CURRENT_DESKTOP=dwm
+export XDG_SESSION_DESKTOP=dwm
+
+systemctl --user import-environment XDG_CURRENT_DESKTOP XDG_SESSION_DESKTOP
+
 # Activate dbus variables
 dbus-update-activation-environment --all
 dbus-launch ssh-agent dwm

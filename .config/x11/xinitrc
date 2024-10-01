@@ -17,7 +17,7 @@ fi
 export XDG_CURRENT_DESKTOP=dwm
 export XDG_SESSION_DESKTOP=dwm
 
-systemctl --user import-environment XDG_CURRENT_DESKTOP XDG_SESSION_DESKTOP
+systemctl --user import-environment XDG_CURRENT_DESKTOP XDG_SESSION_DESKTOP DISPLAY
 
 # Activate dbus variables
 dbus-update-activation-environment --all

@@ -21,6 +21,7 @@ nettraff=$(printf "🔻%4sB 🔺%4sB\\n" $(numfmt --to=iec $rx $tx))
 
 case $BLOCK_BUTTON in
 	1) "$TERMINAL" -e nmtui; pkill -RTMIN+4 dwmblocks ;;
+	2) setsid -f "$TERMINAL" -e bmon ;;
     3) notify-send "󰤥 $(nmcli -t -f name,device connection show --active | grep wlp3s0 | cut -d\: -f1): $percent%
 $nettraff" ;;
 	6) setsid -f "$TERMINAL" -e "$EDITOR" "$0" ;;

@@ -1,0 +1,47 @@
+#!/bin/sh
+
+percent=$(awk '/^\s*w/ { print int($3 * 100 / 70) }' /proc/net/wireless)
+
+update() {
+    sum=0
+    for arg; do
+        read -r i < "$arg"
+        sum=$(( sum + i ))
+    done
+    cache=/tmp/${1##*/}
+    [ -f "$cache" ] && read -r old < "$cache" || old=0
+    printf %d\\n "$sum" > "$cache"
+    printf %d\\n $(( sum - old ))
+}
+
+rx=$(update /sys/class/net/[ew]*/statistics/rx_bytes)
+tx=$(update /sys/class/net/[ew]*/statistics/tx_bytes)
+
+nettraff=$(printf "🔻%4sB 🔺%4sB\\n" $(numfmt --to=iec $rx $tx))
+
+case $BLOCK_BUTTON in
+	1) "$TERMINAL" -e nmtui; pkill -RTMIN+4 dwmblocks ;;
+    3) notify-send "󰤥 $(nmcli -t -f name,device connection show --active | grep wlp3s0 | cut -d\: -f1): $percent%
+$nettraff" ;;
+	6) setsid -f "$TERMINAL" -e "$EDITOR" "$0" ;;
+esac
+# Wifi
+if [ "$(cat /sys/class/net/w*/operstate 2>/dev/null)" = 'up' ] ; then
+    case 1 in
+        $((percent >= 80)) ) wifiicon="󰤨 " ;;
+        $((percent >= 60)) ) wifiicon="󰤥 " ;;
+        $((percent >= 40)) ) wifiicon="󰤢 " ;;
+        $((percent >= 20)) ) wifiicon="󰤟 " ;;
+	    * ) wifiicon="󰤯" ;;
+    esac
+elif [ "$(cat /sys/class/net/w*/operstate 2>/dev/null)" = 'down' ] ; then
+	[ "$(cat /sys/class/net/w*/flags 2>/dev/null)" = '0x1003' ] && wifiicon="󰜏 " ethericon="󰌙 " || wifiicon="󰤭 " ethericon="󰌙 "
+fi
+
+# Ethernet
+[ "$(cat /sys/class/net/e*/operstate 2>/dev/null)" = 'up' ] && ethericon="󰌘 "
+
+# TUN
+[ -n "$(cat /sys/class/net/tun*/operstate 2>/dev/null)" ] && tunicon="󰖂 "
+
+printf "%s%s%s\n" "$wifiicon" "$ethericon" "$tunicon"

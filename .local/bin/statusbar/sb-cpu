@@ -1,0 +1,13 @@
+#!/bin/sh
+
+case $BLOCK_BUTTON in
+	1) notify-send "🖥 CPU hogs" "$(ps axch -o cmd:15,%cpu --sort=-%cpu | head)\\n(100% per core)"
+	notify-send "🧠 Memory hogs" "$(ps axch -o cmd:15,%mem --sort=-%mem | head)" ;;
+	2) setsid -f "$TERMINAL" -e htop ;;
+	6) setsid -f "$TERMINAL" -e "$EDITOR" "$0" ;;
+esac
+
+CPU=$(sensors | grep "Core 0" | sed -r "s/.*\+(.*).[0-9]°C .*/\1°C/")
+RAM=$(free --mebi | sed -n '2{p;q}' | awk '{printf ("%2.2fG", ( $3 / 1024))}')
+
+echo "$CPU/$RAM"

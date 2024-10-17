@@ -36,7 +36,11 @@ for battery in /sys/class/power_supply/BAT?*; do
             $((capacity >= 20)) ) printf "󰂆 " ;;
             $((capacity >= 10)) ) printf "󰢜 " ;;
         esac ;;
-        "Not charging") printf "󰂃" [ $capacity -ge 93 ] && exit || printf " " ;;
+        "Not charging") if [[ $capacity -gt 92 ]] then
+            printf "󰂄" && exit
+        else
+            printf "󰂃 "
+        fi ;;
 		"Unknown") printf "󱠴" ;;
 		*) exit 1 ;;
 	esac

@@ -10,4 +10,4 @@ esac
 CPU=$(sensors | grep "Core 0" | sed -r "s/.*\+(.*).[0-9]°C .*/\1°C/")
 RAM=$(free --mebi | sed -n '2{p;q}' | awk '{printf ("%2.2fG", ( $3 / 1024))}')
 
-echo "$CPU/$RAM"
+echo " $CPU/$RAM"

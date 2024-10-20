@@ -1,8 +1,8 @@
 #!/bin/sh
 
 case $BLOCK_BUTTON in
-	4) xbacklight -inc 10 & ddcutil setvcp 10 +30 &;;
-	5) xbacklight -dec 10 & ddcutil setvcp 10 -30 &;;
+	4) xbacklight -inc 10 & ddcutil setvcp 10 + 20 &;;
+	5) xbacklight -dec 10 & ddcutil setvcp 10 - 20 &;;
 	6) setsid -f "$TERMINAL" -e "$EDITOR" "$0" ;;
 esac
 

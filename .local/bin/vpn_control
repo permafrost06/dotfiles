@@ -1,0 +1,13 @@
+#!/bin/sh
+
+if [ $1 = "tailscale" ] ; then
+    warp-cli disconnect
+    exit_node_ip=$(tailscale status | grep "offers exit node" | sed -r "s/^([0-9.]*).*/\1/")
+    tailscale set --exit-node="$exit_node_ip"
+elif [ $1 = "warp" ] ; then
+    tailscale set --exit-node=
+    warp-cli connect
+elif [ $1 = "off" ] ; then
+    tailscale set --exit-node=
+    warp-cli disconnect
+fi

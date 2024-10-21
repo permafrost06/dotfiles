@@ -1,6 +1,16 @@
 #!/bin/sh
 
 case $BLOCK_BUTTON in
+    2) if [ "$(ddcutil getvcp 14 | sed -r "s/.*0x0([5b]).*/\1/")" = "5" ] ; then
+        ddcutil setvcp 14 11
+    else
+        ddcutil setvcp 14 5
+    fi;;
+    3) if [ "$(ddcutil getvcp 14 | sed -r "s/.*0x0([5b]).*/\1/")" = "5" ] ; then
+        ddcutil setvcp 10 0 && ddcutil setvcp 14 11
+    else
+        ddcutil setvcp 10 100 && ddcutil setvcp 14 5
+    fi ;;
 	4) xbacklight -inc 10 & ddcutil setvcp 10 + 20 &;;
 	5) xbacklight -dec 10 & ddcutil setvcp 10 - 20 &;;
 	6) setsid -f "$TERMINAL" -e "$EDITOR" "$0" ;;

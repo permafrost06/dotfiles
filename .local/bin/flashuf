@@ -1,0 +1,19 @@
+#!/bin/sh
+
+[[ $1 = "--help" || $1 = "-h" ]] && echo "USAGE: flashuf <uf2_file> [-i|-h]" && exit
+
+if [ "$(ls /dev/disk/by-id/*UF2* | wc -l)" -gt 1 ] ; then
+    echo "More than one uf2 device found. Please mount and copy manually."
+    exit
+fi
+if [ ! -f $1 ] ; then
+    echo "$1 does not exist"
+    exit
+fi
+if [[ $1 != *.uf2 && $2 != "-i" ]] ; then
+    echo "File does not have .uf2 extension. Use flag -i to override"
+    exit
+fi
+
+sudo mount /dev/disk/by-id/*UF2* /mnt/flash
+cp $1 /mnt/flash/ && sudo umount /mnt/flash

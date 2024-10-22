@@ -1,0 +1,5 @@
+~/work/*
+~/.local/src/*
+~/dotfiles/.local/bin
+~/dotfiles/.local/bin/statusbar
+~/dotfiles/.config

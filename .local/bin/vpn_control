@@ -1,13 +1,22 @@
 #!/bin/sh
 
-if [ $1 = "tailscale" ] ; then
-    warp-cli disconnect
-    exit_node_ip=$(tailscale status | grep "offers exit node" | sed -r "s/^([0-9.]*).*/\1/")
-    tailscale set --exit-node="$exit_node_ip"
-elif [ $1 = "warp" ] ; then
-    tailscale set --exit-node=
-    warp-cli connect
-elif [ $1 = "off" ] ; then
-    tailscale set --exit-node=
-    warp-cli disconnect
+if [ $1 = "toggle" ] ; then
+    if [[ $(tailscale status | grep "; exit node;") ]] || [[ $(warp-cli status | grep "Connected") ]] ; then
+        warp-cli disconnect
+        tailscale set --exit-node=
+    else
+        exit_node_ip=$(tailscale status | grep "offers exit node" | sed -r "s/^([0-9.]*).*/\1/")
+        tailscale set --exit-node="$exit_node_ip"
+    fi
+elif [ $1 = "switch" ] ; then
+    if [[ $(tailscale status | grep "; exit node;") ]] ; then
+        tailscale set --exit-node=
+        warp-cli connect
+    elif [[ $(warp-cli status | grep "Connected") ]] ; then
+        warp-cli disconnect
+        exit_node_ip=$(tailscale status | grep "offers exit node" | sed -r "s/^([0-9.]*).*/\1/")
+        tailscale set --exit-node="$exit_node_ip"
+    fi
 fi
+
+pkill -RTMIN+4 "${STATUSBAR:-dwmblocks}"

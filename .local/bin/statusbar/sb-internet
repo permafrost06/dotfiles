@@ -45,6 +45,7 @@ fi
 # TUN
 [ -n "$(cat /sys/class/net/tun*/operstate 2>/dev/null)" ] && tunicon="󰖂 "
 [ -n "$(tailscale status | grep "; exit node;")" ] && tunicon="󰖂 "
+[ -n "$(warp-cli status | grep "Connecting")" ] && tunicon=" "
 [ -n "$(warp-cli status | grep "Connected")" ] && tunicon=" "
 
 printf "%s%s%s\n" "$wifiicon" "$ethericon" "$tunicon"

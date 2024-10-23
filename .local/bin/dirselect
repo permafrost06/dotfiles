@@ -4,4 +4,4 @@ dirlist=$(cat ~/.config/dirlist | sed "s|^~|$HOME|")
 dirs=$(find $(echo "$dirlist" | grep \* | sed "s/\*$//") -mindepth 1 -maxdepth 1 -type d)
 dirs=$(echo "$dirs" && echo "$dirlist" | grep -v \*)
 
-echo "$dirs" | dmenu -l 10 -i -p "Select dir for this tag:"
+echo "$dirs" | dmenu -l 10 -i -p "Select dir for this tag:" | sed "s|\/home\/frost|~|"

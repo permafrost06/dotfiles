@@ -1,0 +1,25 @@
+#!/bin/sh
+
+# Show the list in dmenu and capture the selected layout
+selected_layout=$(echo "tile
+bstack
+spiral
+dwindle
+deck
+monocle
+centeredmaster
+centeredfloatingmaster" | dmenu -p "Select tiling layout")
+
+# Use a case statement to output only the index based on the selection
+case "$selected_layout" in
+    "tile") echo 0 ;;
+    "bstack") echo 1 ;;
+    "spiral") echo 2 ;;
+    "dwindle") echo 3 ;;
+    "deck") echo 4 ;;
+    "monocle") echo 5 ;;
+    "centeredmaster") echo 6 ;;
+    "centeredfloatingmaster") echo 7 ;;
+    *) exit 1 ;;  # Exit with no output if no valid selection was made
+esac
+

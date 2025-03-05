@@ -1,0 +1,4 @@
+#!/bin/sh
+
+gsettings set org.gnome.desktop.interface color-scheme prefer-dark
+xrdb -merge ~/.config/x11/gruvbox-dark.xresources

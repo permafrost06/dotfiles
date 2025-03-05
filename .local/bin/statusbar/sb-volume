@@ -5,6 +5,7 @@
 case $BLOCK_BUTTON in
 	1) setsid -w -f "$TERMINAL" -e pulsemixer; pkill -RTMIN+10 "${STATUSBAR:-dwmblocks}" ;;
 	2) wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle ;;
+    3) amixer set Capture toggle ;;
 	4) wpctl set-volume @DEFAULT_AUDIO_SINK@ 3%+ ;;
 	5) wpctl set-volume @DEFAULT_AUDIO_SINK@ 3%- ;;
 	6) setsid -f "$TERMINAL" -e "$EDITOR" "$0" ;;
@@ -33,4 +34,10 @@ case 1 in
 	* ) echo  && exit ;;
 esac
 
-echo "$icon$vol%"
+output=$(amixer get Capture | grep '\[off\]')
+if [ -z "$output" ]; then
+    echo "$icon$vol% "
+else
+    echo "$icon$vol%"
+fi
+

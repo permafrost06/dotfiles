@@ -24,6 +24,10 @@ vim.cmd[[
     augroup END
 ]]
 
+vim.cmd[[
+    autocmd BufWritePost ~/resume/zahin_azmayeen_resume.tex silent !~/resume/build.sh
+]]
+
 function SetSpecialOptions()
     vim.opt_local.signcolumn = "no"
     vim.opt_local.number = false

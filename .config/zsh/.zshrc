@@ -98,3 +98,6 @@ esac
 # zsh-autosuggestions
 source /usr/share/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
 # zsh-autosuggestions end
+. "/home/frost/.deno/env"
+# Turso
+export PATH="$PATH:/home/frost/.turso"

@@ -5,4 +5,5 @@ return {
     'tpope/vim-surround',
     'tpope/vim-repeat',
     'folke/neodev.nvim',
+    'preservim/vim-pencil',
 }

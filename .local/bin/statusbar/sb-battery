@@ -1,5 +1,20 @@
 #!/bin/sh
 
+external_display_brightness() {
+    local direction=$1
+    local amount=$2
+
+    if [[ "$direction" == "+" ]]; then
+        ddcutil setvcp 10 + $amount
+    else
+        ddcutil setvcp 10 - $amount
+    fi
+
+    current=$(ddcutil getvcp 10 | sed -n 's/.*current value = *\([0-9]\+\),.*/\1/p')
+
+    notify-send "Current brightness: $current"
+}
+
 case $BLOCK_BUTTON in
     2) if [ "$(ddcutil getvcp 14 | sed -r "s/.*0x0([5b]).*/\1/")" = "5" ] ; then
         ddcutil setvcp 14 11
@@ -11,8 +26,8 @@ case $BLOCK_BUTTON in
     else
         ddcutil setvcp 10 100 && ddcutil setvcp 14 5
     fi ;;
-	4) brightnessctl s 10%+ & ddcutil setvcp 10 + 10 &;;
-	5) brightnessctl s 10%- & ddcutil setvcp 10 - 10 &;;
+	4) brightnessctl s 10%+ & external_display_brightness + 10 &;;
+	5) brightnessctl s 10%- & external_display_brightness - 10 &;;
 	6) setsid -f "$TERMINAL" -e "$EDITOR" "$0" ;;
 esac
 

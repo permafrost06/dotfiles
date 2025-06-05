@@ -11,8 +11,8 @@ case $BLOCK_BUTTON in
     else
         ddcutil setvcp 10 100 && ddcutil setvcp 14 5
     fi ;;
-	4) xbacklight -inc 10 & ddcutil setvcp 10 + 20 &;;
-	5) xbacklight -dec 10 & ddcutil setvcp 10 - 20 &;;
+	4) brightnessctl s 10%+ & ddcutil setvcp 10 + 10 &;;
+	5) brightnessctl s 10%- & ddcutil setvcp 10 - 10 &;;
 	6) setsid -f "$TERMINAL" -e "$EDITOR" "$0" ;;
 esac
 

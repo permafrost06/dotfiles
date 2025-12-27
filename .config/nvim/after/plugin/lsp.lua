@@ -132,3 +132,96 @@ require("lspconfig").intelephense.setup({
 });
 
 lsp.setup()
+
+-- TypeScript project-wide type checking
+local function typescript_check()
+    -- Find nearest tsconfig.json (package-level)
+    local tsconfig = vim.fs.find('tsconfig.json', {
+        upward = true,
+        path = vim.fn.expand('%:p:h')
+    })[1]
+    
+    if not tsconfig then
+        vim.notify('No tsconfig.json found in parent directories', vim.log.levels.ERROR)
+        return
+    end
+    
+    local tsconfig_dir = vim.fn.fnamemodify(tsconfig, ':h')
+    
+    -- Find tsc: check current dir, then search upward for monorepo root
+    local tsc_cmd = nil
+    local search_dir = tsconfig_dir
+    
+    -- Search upward for node_modules/.bin/tsc (monorepo support)
+    while search_dir ~= '/' do
+        local candidate = search_dir .. '/node_modules/.bin/tsc'
+        if vim.fn.executable(candidate) == 1 then
+            tsc_cmd = candidate
+            break
+        end
+        search_dir = vim.fn.fnamemodify(search_dir, ':h')
+    end
+    
+    -- Fallback to global tsc
+    if not tsc_cmd then
+        if vim.fn.executable('tsc') == 1 then
+            tsc_cmd = 'tsc'
+        else
+            vim.notify('TypeScript not found. Install with: npm install -g typescript', vim.log.levels.ERROR)
+            return
+        end
+    end
+    
+    -- Show notification
+    vim.notify('Type checking...', vim.log.levels.INFO)
+    
+    -- Run tsc and capture output (run from tsconfig directory)
+    local cmd = string.format('cd %s && %s --noEmit --pretty false 2>&1', 
+        vim.fn.shellescape(tsconfig_dir), 
+        tsc_cmd
+    )
+    
+    local output = vim.fn.system(cmd)
+    local exit_code = vim.v.shell_error
+    
+    if exit_code == 0 then
+        -- No errors
+        vim.notify('✓ No type errors found', vim.log.levels.INFO)
+        vim.fn.setqflist({}, 'r')  -- Clear quickfix
+    else
+        -- Parse TypeScript errors into quickfix
+        -- Format: file.ts(line,col): error TS1234: message
+        local qf_items = {}
+        for _, line in ipairs(vim.split(output, '\n')) do
+            local file, lnum, col, errcode, msg = line:match('(.+)%((%d+),(%d+)%)%: error (%S+)%: (.+)')
+            if file then
+                -- Convert relative path to absolute (relative to tsconfig_dir)
+                local abs_file = file
+                if not vim.startswith(file, '/') then
+                    abs_file = tsconfig_dir .. '/' .. file
+                end
+                
+                table.insert(qf_items, {
+                    filename = abs_file,
+                    lnum = tonumber(lnum),
+                    col = tonumber(col),
+                    text = string.format('[%s] %s', errcode, msg),
+                    type = 'E'
+                })
+            end
+        end
+        
+        vim.fn.setqflist(qf_items, 'r')
+        
+        local error_count = #qf_items
+        
+        if error_count > 0 then
+            vim.cmd('copen')
+            vim.notify(string.format('Found %d type error(s)', error_count), vim.log.levels.WARN)
+        else
+            vim.notify('Type check completed but no errors could be parsed', vim.log.levels.WARN)
+        end
+    end
+end
+
+vim.keymap.set('n', '<leader>vq', typescript_check, { desc = 'TypeScript check project' })
